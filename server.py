@@ -33,7 +33,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 DATABASE_USERNAME = "fi2191"
 DATABASE_PASSWRD = "4327"
 DATABASE_HOST = "34.28.53.86" # change to 34.28.53.86 if you used database 2 for part 2
-DATABASEURI = f"postgresql://fi2191:4327@34.28.53.86/project1"
+DATABASEURI = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWRD}@{DATABASE_HOST}/project1"
 
 
 #
@@ -173,19 +173,37 @@ def index():
 def another():
 	return render_template("another.html")
 
+#
+# This is the path to the User Profile
+#   
+#   localhost:8111/profile
+@app.route('profile/<name>')
+def profile(name):
+
+        select_query = "SELECT user_name from users WHERE user_name=name"
+        cursor = g.conn.execute(text(select_query))
+        names = []
+        for result in cursor:
+                names.append(result[0])
+        cursor.close()
+    context = dict(data = names)
+
+    return render_template("profile.html", **context)
+
 
 # Example of adding new data to the database
-@app.route('/add', methods=['POST'])
+@app.route('/sign-up', methods=['POST'])
 def add():
 	# accessing form inputs from user
 	name = request.form['name']
+        account_type = request.form['account type']
 	
 	# passing params in for each variable into query
 	params = {}
-	params["new_name"] = name
-	g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
+	params["new_name", "account_type"] = name, account_type
+        g.conn.execute(text('INSERT INTO test(name, account_type) VALUES (:new_name, :account_type)'), **params)
 	g.conn.commit()
-	return redirect('/')
+	return redirect('/profile/<name>')
 
 
 @app.route('/login')
