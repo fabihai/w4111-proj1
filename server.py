@@ -119,7 +119,7 @@ def index():
 	#
 	# example of a database query
 	#
-	select_query = "SELECT m.movie_name, s.song_name, a.actor_name FROM movie m, songs s, actor a WHERE name=m.movie_name AND name=s.song_name AND name=a.actor.name"
+	select_query = "SELECT name from test"
 	cursor = g.conn.execute(text(select_query))
 	names = []
 	for result in cursor:
