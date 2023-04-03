@@ -151,7 +151,7 @@ def index():
 	#     <div>{{n}}</div>
 	#     {% endfor %}
 	#
-	context = {}
+	context = dict(data = names)
 
 
 	#
