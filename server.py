@@ -180,12 +180,12 @@ def another():
 @app.route('profile/<name>')
 def profile(name):
 
-        select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
-        cursor = g.conn.execute(text(select_query))
-        names = []
-        for result in cursor:
-                names.append(result[0])
-        cursor.close()
+    select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
+    cursor = g.conn.execute(text(select_query))
+    names = []
+    for result in cursor:
+        names.append(result[0])
+    cursor.close()
     context = dict(data = names)
 
     return render_template("profile.html", **context)
