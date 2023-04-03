@@ -23,9 +23,15 @@
     <h2>Search</h2>
   </div>
 
-  <form method="GET" action="/">
+  <form method="GET" action="/search-all">
   <p> <input type="text" name="name"> <input type="submit" value="Search"></p>
   </form>
+
+  <div>
+    {% for n in data %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
 
 </body>
 
