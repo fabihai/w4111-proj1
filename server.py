@@ -177,7 +177,7 @@ def another():
 # This is the path to the User Profile
 #   
 #   localhost:8111/profile
-@app.route('profile/<name>')
+@app.route('/profile/<name>')
 def profile(name):
 
     select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
@@ -200,7 +200,8 @@ def signup():
 	# passing params in for each variable into query
 	params = {}
 	params["new_name", "account_type"] = name, account_type
-    g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), **params)
+    
+	g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
 	g.conn.commit()
 	return redirect('/profile/<name>')
 
@@ -210,7 +211,7 @@ def login():
 	
     name = request.form['name']
     
-    return redirect('profile/<name>')
+    return redirect('/profile/<name>')
 
 
 if __name__ == "__main__":
