@@ -1,0 +1,32 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+  <body>
+    <nav>
+      <div class = "navbar">
+	<h1> Movie DB </h1>
+        <a href="index.html"> HOME </a>
+	<a href="songs.html"> SONGS </a>
+	<a class="active" href="movies.html"> MOVIES </a>
+	<a href="awards.html"> AWARDS </a>
+	<a href="profile.html"> PROFILE </a>
+	<a href="sign-up.html"> SIGN UP/LOG IN </a>
+      </div>
+    </nav>
+    <div>
+      <h2> Search by Movie</h2>
+    </div>
+
+    <form method="GET" action="/movie-results">
+	    <p> <input type="text" name="movie"> </p>
+	    <p> <input type="submit" value="Search"> </p>
+    </form>
+  </body>
+
+
+</html>

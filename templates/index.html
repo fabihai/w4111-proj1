@@ -11,29 +11,21 @@
   <nav>
     <div class = "navbar">
       <h1>Movie DB</h1>
-    <ul class="pages">
-      <li> <a href="home.html"> HOME </a> </li>
-      <li> <a href="songs.html"> SONGS </a> </li>
-      <li> <a href="movies.html"> MOVIES </a> </li>
-      <li> <a href="awards.html"> AWARDS </a> </li>
-      <li> <a href="profile.html"> PROFILE </a> </li>
-      <li> <a href="SignUpLogIn.html"> SIGN UP/LOG IN </a> </li>
-    </ul>
+        <a class="active"href="index.html"> HOME </a>
+        <a href="songs.html"> SONGS </a>
+        <a href="movies.html"> MOVIES </a>
+        <a href="awards.html"> AWARDS </a>
+        <a href="profile.html"> PROFILE </a>
+	<a href="sign-up.html"> SIGN UP/LOG IN </a>
+    </div>
   </nav>
   <div>
     <h2>Search</h2>
   </div>
-      <!--
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
--->
 
-<form method="POST" action="/add">
-<p> <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
+  <form method="GET" action="/add">
+  <p> <input type="text" name="name"> <input type="submit" value="Search"></p>
+  </form>
 
 </body>
 

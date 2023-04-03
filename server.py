@@ -119,7 +119,7 @@ def index():
 	#
 	# example of a database query
 	#
-	select_query = "SELECT name from test"
+	select_query = "SELECT name FROM movie m, songs s, actor a"
 	cursor = g.conn.execute(text(select_query))
 	names = []
 	for result in cursor:
@@ -180,7 +180,7 @@ def another():
 @app.route('profile/<name>')
 def profile(name):
 
-        select_query = "SELECT user_name from users WHERE user_name=name"
+        select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
         cursor = g.conn.execute(text(select_query))
         names = []
         for result in cursor:
@@ -191,25 +191,27 @@ def profile(name):
     return render_template("profile.html", **context)
 
 
-# Example of adding new data to the database
+# Adds new user to the DB system
 @app.route('/sign-up', methods=['POST'])
-def add():
+def signup():
 	# accessing form inputs from user
 	name = request.form['name']
-        account_type = request.form['account type']
+    account_type = request.form['account_type']
 	
 	# passing params in for each variable into query
 	params = {}
 	params["new_name", "account_type"] = name, account_type
-        g.conn.execute(text('INSERT INTO test(name, account_type) VALUES (:new_name, :account_type)'), **params)
+        g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), **params)
 	g.conn.commit()
 	return redirect('/profile/<name>')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
-	abort(401)
-	this_is_never_executed()
+	
+    name = request.form['name']
+    
+    return redirect('profile/<name>')
 
 
 if __name__ == "__main__":
