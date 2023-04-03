@@ -115,7 +115,6 @@ def index():
 	# DEBUG: this is debugging code to see what request looks like
 	print(request.args)
 
-
 	#
 	# example of a database query
 	#
@@ -152,13 +151,29 @@ def index():
 	#     <div>{{n}}</div>
 	#     {% endfor %}
 	#
-	context = dict(data = names)
+	context = {}
 
 
 	#
 	# render_template looks in the templates/ folder for files.
 	# for example, the below file reads template/index.html
 	#
+	return render_template("index.html", **context)
+
+@app.route('/search-all')
+def searchall():
+
+	name = request.form['name']
+
+	select_query = "SELECT m.movie_name, s.song_name, a.actor_name FROM movie m, songs s, actor a WHERE name=m.movie_name AND name=s.song_name AND name=a.actor.name"
+	cursor = g.conn.execute(text(select_query))
+	names = []
+	for result in cursor:
+		names.append(result[0])
+	cursor.close()
+
+	context = dict(data = names)
+
 	return render_template("index.html", **context)
 
 #
