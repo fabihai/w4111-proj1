@@ -126,19 +126,15 @@ def index():
 @app.route('/profile')
 @login_required
 def profile():
+	select_query = "SELECT * from users WHERE user_id=current_user.id"
+	cursor = g.conn.execute(text(select_query))
+	info = []
+	for result in cursor:
+		info.append(result[0])
+	cursor.close()
+	context = dict(data = info)
 
-    if current_user.is_authenticated:
-        select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
-        cursor = g.conn.execute(text(select_query))
-        info = []
-        for result in cursor:
-            info.append(result[0])
-        cursor.close()
-        context = dict(data = info)
-    else:
-        return redirect('/sign-up')
-
-    return render_template("profile.html", **context)
+	return render_template("profile.html", **context)
 
 # Adds new user to the DB system
 @app.route('/sign-up', methods = ['POST'])

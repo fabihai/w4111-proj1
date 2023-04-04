@@ -18,8 +18,12 @@
         <a class="active"href="/"> HOME </a>
         <a href="/songs"> SONGS </a>
         <a href="/movies"> MOVIES </a>
-        <a href="/profile"> PROFILE </a>
-	      <a href="/sign-up"> SIGN UP/LOG IN </a>
+
+        {% if current_user.is_authenticated %}
+          <a href="/profile"> PROFILE </a>
+        {% else %}
+          <a href="/sign-up"> SIGN UP </a>
+        {% endif %}
     </div>
   </nav>
   <div>
