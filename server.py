@@ -163,11 +163,11 @@ def signup():
         cursor.close()
         return redirect('/login')
     else:
-        flash("Username is taken. Pick a new one.")
-        return redirect('/sign-up')
+    	flash("Username is taken. Pick a new one.")
+    	return redirect('/sign-up')
 	return render_template("sign-up.html")
 
-
+	
 @app.route('/login', methods=['GET'])
 def login():
     
