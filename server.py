@@ -189,19 +189,19 @@ def get_movies():
 	movie_name = request.args.get("movie_name")
 
 
-	if(genre is not None and language is not None and movie_name is not None):
+	if(genre != "" and language != ""  and movie_name != "" ):
 		print("genre: ", genre, "language: ", language, "movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}' AND MOVIE_NAME = '{movie_name}'"))
-	elif(genre is not None and language is not None):
+	elif(genre != "" and language != ""):
 		print("genre: ", genre, "language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}'"))
-	elif(genre is not None ):
+	elif(genre != ""):
 		print("genre: ", genre)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where GENRE = '{genre}'"))
-	elif(language is not None):
+	elif(language != ""):
 		print("language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}'"))
-	elif(movie_name is not None):
+	elif(movie_name != ""):
 		print("movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where MOVIE_NAME = '{movie_name}'"))
 	else:
