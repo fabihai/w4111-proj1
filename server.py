@@ -221,18 +221,21 @@ def get_movies():
 def movies_homepage():
 	return render_template("movies.html")
 
-
 @app.route('/songs', methods=['GET'])
-def get_songs():
-	song_name = request.args.get("songname")
-	language = request.args.get("language")
-	# singer = request.args.get("singer")
+def songs_homepage():
+	return render_template("songs.html")
 
-	if(song_name is not None):
+@app.route('/song_results', methods=['GET'])
+def get_songs():
+	song_name = request.args.get("song_name")
+	language = request.args.get("language")
+	singer = request.args.get("singer")
+
+	if(song_name != ""):
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
-	# elif (singer is not None):
-	# 	cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
-	elif (language is not None):
+	elif (singer != ""):
+		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
+	elif (language != ""):
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
 	else:
 		cursor = g.conn.execute(text("SELECT * FROM SONGS"))
@@ -242,7 +245,7 @@ def get_songs():
 		songs.append(row)
 	print("Songs: ", songs)
 	context = dict(data = songs)
-	return render_template("songs.html", **context)		
+	return render_template("songsearch_results.html", **context)		
 
 @app.route('/trending', methods=['GET'])
 def get_trending_movies():
