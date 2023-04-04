@@ -294,7 +294,7 @@ def get_songs():
 
 
 @app.route('/highlyrated', methods=['GET'])
-def get_songs():
+def get_highlyrated():
 	cursor = g.conn.execute(text("select m.MOVIE_NAME, avg(r.RATINGS) as avg_rating from MOVIE as m join REVIEW_RATINGS as r on m.movie_id = r.movie_id group by m.movie_id order by avg_rating desc"))
 
 	highlyrated_movies = []
