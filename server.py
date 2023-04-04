@@ -264,8 +264,8 @@ def get_movieinfo(moviename):
 	cursor = g.conn.execute(text(f"select mm.avg_rating from (select m.MOVIE_NAME, avg(r.RATINGS) as avg_rating from MOVIE as m join REVIEW_RATINGS as r on m.movie_id = r.movie_id group by m.movie_id order by avg_rating desc) as mm where mm.MOVIE_NAME = '{moviename}' "))
 	rating = [i for i in cursor]
 
-	cursor = g.conn.execute(text(f"select MOVIE_NAME, LANGUAGE from MOVIE"))
-	rating = [i for i in cursor]
+	cursor = g.conn.execute(text(f"select movie_name, language from movie"))
+	# rating = [i for i in cursor]
 	highlyrated_movies = []
 	for row in cursor:
 		highlyrated_movies.append(row)
