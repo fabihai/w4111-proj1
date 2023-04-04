@@ -18,25 +18,23 @@
       <a href="/songs"> SONGS </a>
       <a href="/movies"> MOVIES </a>
       <a href="/profile"> PROFILE </a>
-      <a class="active" href="/"> SIGN UP </a>
-      <a href="/login"> LOG IN </a>
+      <a href="/sign-up"> SIGN UP </a>
+      <a class="active" href="/"> LOG IN </a>
     </div>
+    
     <div>
-      <h2> Sign Up </h2>
+      <h2> Log In </h2>
     </div>
 
-    <form method="POST" action="/sign-up">
+    <form method="GET" action="/log-in">
       {{ form.hidden_tag() }}
       {{ form.username }}
-      {{ form.account_type }}
       {{ form.submit }}
-	    <!--
-      <p> User Name: <input type="text" name="name"> </p>
-	    <p> Account Type (Prime, Non Prime, VIP): <input type="text" name="account_type"> </p>
-	    <p> <input type="submit" value="Sign Up"> </p>
+      <!--
+	    <p> User Name: <input type="text" name="name"> </p>
+	    <p> <input type="submit" value="Log In"> </p>
       -->
     </form>
-
   </body>
 
 
