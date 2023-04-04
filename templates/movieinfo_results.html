@@ -12,14 +12,7 @@ table, th, td {
 
 
 <table style="width:100%">
-  <tr>
-    
-    <th>Movie Name</th>
-    <th>Language</th>
-    <th>Director</th>
-    <th>Genre</th>
-  </tr>
-  
+
   <p>Movie name:  {{movie_info[0][0]}}</p>
   <p>Language:  {{movie_info[0][1]}}</p>
   <p>Director:  {{movie_info[0][2]}}</p>
@@ -28,16 +21,17 @@ table, th, td {
 
 
 
-    {% for i in movie_info %}
+    <!-- {% for i in movie_info %}
     <p>{{i}}</p>
     {% endfor %}
 
     {% for i in rate %}
     <p>Rating: {{i[0]}}</p>
-    {% endfor %}
+    {% endfor %} -->
 
+    <p>Actors</p>
     {% for i in actors %}
-    <p>Actors: {{i[0]}}</p>
+    <p>{{i[0]}}</p>
     {% endfor %}
 
 
