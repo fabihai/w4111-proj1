@@ -257,7 +257,7 @@ def get_highlyrated():
 	return render_template("highlyrated.html", **context) 
 
 @app.route('/movie/<moviename>', methods=['GET'])
-def get_songs(moviename):
+def get_movieinfo(moviename):
 	cursor = g.conn.execute(text(f"select ACTOR_NAME from ACTOR where ACTOR_ID in (select r.ACTOR_ID from (select * from MOVIE where MOVIE_NAME = '{moviename}') as m JOIN ROLE_PLAYED as r on m.movie_id = r.movie_id)"))
 	actors = [i for i in cursor]
 
