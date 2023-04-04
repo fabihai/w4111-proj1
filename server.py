@@ -12,8 +12,8 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
-from flask_login import *
+from flask import Flask, request, render_template, g, redirect, flash, url_for, Response
+from flask_login import login_user, current_user, login_required
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -124,6 +124,7 @@ def index():
 #   
 #   localhost:8111/profile
 @app.route('/profile')
+@login_required
 def profile():
 
     if current_user.is_authenticated:
@@ -146,19 +147,19 @@ def signup():
 		return redirect('/index')
 	else:
 		name, account_type = request.form['name', 'account_type']
-	params = {}
-	params["new_name", "account_type"] = name, account_type
-	select_query = "SELECT user_name FROM users WHERE name = user_name"
-	cursor = g.conn.execute(text(select_query))
-	if cursor.fetchone() is None:
-		g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
-		g.conn.commit()
-		flash('Account successfully created. Please log in.')
-		cursor.close()
-		return redirect('/login')
-	else:
-		flash("Username is taken. Pick a new one.")
-		return redirect("/sign-up")
+		params = {}
+		params["new_name", "account_type"] = name, account_type
+		select_query = "SELECT user_name FROM users WHERE name = user_name"
+		cursor = g.conn.execute(text(select_query))
+		if cursor.fetchone() is None:
+			g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
+			g.conn.commit()
+			flash('Account successfully created. Please log in.')
+			cursor.close()
+			return redirect('/login')
+		else:
+			flash("Username is taken. Pick a new one.")
+			return redirect("/sign-up")
 	return render_template("sign-up.html")
 
 
@@ -211,7 +212,7 @@ def get_movies():
 	print(movies)
 	context = dict(data = movies)
 	#return render_template("movies.html", **context)
-    return render_template("moviesearch_results.html", **context)
+	return render_template("moviesearch_results.html", **context)
 
 @app.route('/songs', methods=['GET'])
 def get_songs():
