@@ -29,6 +29,26 @@
     <form method="GET">
     <p> <input type="text" name="search"> <input type="submit" value="Search"></p>
     </form>
+    
+    <h2>Songs table</h2>
+
+    <table style="width:100%">
+      <thead>
+        <tr>
+          <th>Song Name</th>
+          <th>Language</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        {% for n in data %}
+        <tr> 
+        <td>{{n[2]}}</td>
+        <td>{{n[3]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </body>
 
 

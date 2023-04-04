@@ -218,16 +218,16 @@ def get_movies():
 def get_songs():
 	song_name = request.args.get("songname")
 	language = request.args.get("language")
-	singer = request.args.get("singer")
+	# singer = request.args.get("singer")
 
 	if(song_name is not None):
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
-	elif (singer is not None):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
+	# elif (singer is not None):
+	# 	cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
 	elif (language is not None):
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
 	else:
-		cursor = None 
+		cursor = g.conn.execute(text("SELECT * FROM SONGS"))
 
 	songs = []
 	for row in cursor:
