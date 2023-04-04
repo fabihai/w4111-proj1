@@ -3,7 +3,7 @@ UNI - fi2191
 Passcode : 4327
 Used database 2 
 
-URL for the web application :
+URL for the web application : http://34.74.148.170:8111/
  
 Parts of your original proposal in Part 1 that you implemented :
 
