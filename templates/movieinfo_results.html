@@ -10,6 +10,26 @@ table, th, td {
 <h2>Movie information</h2>
 
 
+
+<table style="width:100%">
+  <tr>
+    
+    <th>Movie Name</th>
+    <th>Language</th>
+    <th>Director</th>
+    <th>Genre</th>
+  </tr>
+  
+  <p>Movie name:  {{movie_info[0]}}</p>
+  <p>Language:  {{movie_info[1]}}</p>
+  <p>Director:  {{movie_info[2]}}</p>
+  <p>Genre:  {{movie_info[3]}}</p>
+  <p>Rating:  {{rate[0]}}</p>
+
+  <p>Actors:  {{actors[0]}}</p>
+
+
+
     {% for i in movie_info %}
     <p>{{i}}</p>
     {% endfor %}
