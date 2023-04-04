@@ -13,6 +13,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+from flask_login import *
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -101,6 +102,7 @@ def teardown_request(exception):
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
 @app.route('/')
+@app.route('/index')
 def index():
 	"""
 	request is a special object that Flask provides to access web request information:
@@ -114,94 +116,26 @@ def index():
 
 	# DEBUG: this is debugging code to see what request looks like
 	print(request.args)
-
-	#
-	# example of a database query
-	#
-	select_query = "SELECT name from test"
-	cursor = g.conn.execute(text(select_query))
-	names = []
-	for result in cursor:
-		names.append(result[0])
-	cursor.close()
-
-	#
-	# Flask uses Jinja templates, which is an extension to HTML where you can
-	# pass data to a template and dynamically generate HTML based on the data
-	# (you can think of it as simple PHP)
-	# documentation: https://realpython.com/primer-on-jinja-templating/
-	#
-	# You can see an example template in templates/index.html
-	#
-	# context are the variables that are passed to the template.
-	# for example, "data" key in the context variable defined below will be 
-	# accessible as a variable in index.html:
-	#
-	#     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-	#     <div>{{data}}</div>
-	#     
-	#     # creates a <div> tag for each element in data
-	#     # will print: 
-	#     #
-	#     #   <div>grace hopper</div>
-	#     #   <div>alan turing</div>
-	#     #   <div>ada lovelace</div>
-	#     #
-	#     {% for n in data %}
-	#     <div>{{n}}</div>
-	#     {% endfor %}
-	#
-	context = dict(data = names)
-
-
-	#
-	# render_template looks in the templates/ folder for files.
-	# for example, the below file reads template/index.html
-	#
 	return render_template("index.html", **context)
 
-@app.route('/search-all')
-def searchall():
-
-	name = request.form['name']
-
-	select_query = "SELECT m.movie_name, s.song_name, a.actor_name FROM movie m, songs s, actor a WHERE name=m.movie_name AND name=s.song_name AND name=a.actor.name"
-	cursor = g.conn.execute(text(select_query))
-	names = []
-	for result in cursor:
-		names.append(result[0])
-	cursor.close()
-
-	context = dict(data = names)
-
-	return render_template("index.html", **context)
-
-#
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-@app.route('/another')
-def another():
-	return render_template("another.html")
 
 #
 # This is the path to the User Profile
 #   
 #   localhost:8111/profile
-@app.route('/profile/<name>')
-def profile(name):
+@app.route('/profile')
+def profile():
 
-    select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
-    cursor = g.conn.execute(text(select_query))
-    names = []
-    for result in cursor:
-        names.append(result[0])
-    cursor.close()
-    context = dict(data = names)
+    if current_user.is_authenticated:
+        select_query = "SELECT u.*, p.*, r.* from users u, purchased_by p, rates r WHERE user_name=name AND u.user_id=p.user_id AND u.user_id=r.user_id"
+        cursor = g.conn.execute(text(select_query))
+        info = []
+        for result in cursor:
+            info.append(result[0])
+        cursor.close()
+        context = dict(data = info)
+    else:
+        return redirect('/sign-up')
 
     return render_template("profile.html", **context)
 
@@ -209,24 +143,46 @@ def profile(name):
 # Adds new user to the DB system
 @app.route('/sign-up', methods=['POST'])
 def signup():
-	# accessing form inputs from user
-	name, account_type = request.form['name', 'account_type']
+
+        # checks if user is logged in
+        if current_user.is_authenticated:
+            return redirect('/index')
+        else:
+	    # accessing form inputs from user
+	    name, account_type = request.form['name', 'account_type']
 	
-	# passing params in for each variable into query
-	params = {}
-	params["new_name", "account_type"] = name, account_type
+	    # passing params in for each variable into query
+	    params = {}
+	    params["new_name", "account_type"] = name, account_type
     
-	g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
-	g.conn.commit()
-	return redirect('/profile/<name>')
+	    select_query = "SELECT user_name FROM users WHERE name=user_name")
+            cursor = g.conn.execute(text(select_query))
+            if cursor.fetchone() is None:
+                g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
+	        g.conn.commit()
+                flash('Account successfully created. Please log in.')
+                cursor.close()
+                return redirect('/login')
+            else:
+                flash("Username is taken. Pick a new one.")
+                return redirect('/sign-up')
+	return render_template("sign-up.html")
 
 
 @app.route('/login', methods=['GET'])
 def login():
-	
-    name = request.form['name']
     
-    return redirect('/profile/<name>')
+    if current_user.is_authenticated:
+        return redirect('/index')
+    else:
+        name = request.form['name']
+        cursor = g.conn.execute(text('SEARCH user_name FROM users WERE user_name=name'))
+        if cursor.fetchone() is None:
+            flash('Incorrect username. Try again.')
+            redirect('/login')
+        else:
+            return redirect('index')
+    return render_template("sign-up.html")
 
 
 @app.route('/movies', methods=['GET'])
