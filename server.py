@@ -270,7 +270,7 @@ def get_highlyrated():
 	context = dict(data = highlyrated_movies)
 	return render_template("highlyrated.html", **context) 
 
-@app.route('/movieinfo/', methods=['GET'])
+@app.route('/movieinfo_results', methods=['GET'])
 def get_movieinfo():
 	moviename = request.args.get("movie_name")
 
