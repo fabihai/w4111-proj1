@@ -229,6 +229,83 @@ def login():
     return redirect('/profile/<name>')
 
 
+@app.route('/movies', methods=['GET'])
+def get_movies():
+	print("Arguments: ", request.args)
+	print("Genre args: ", request.args.get('genre'))
+	print("Language args: ", request.args.get('language'))
+
+	genre = request.args.get("genre")
+	language = request.args.get("language")
+	movie_name = request.args.get("movie_name")
+
+
+	if(genre is not None and language is not None and movie_name is not None):
+		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}' AND MOVIE_NAME = '{movie_name}'"))
+	elif(genre is not None and language is not None and movie_name is None):
+		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}'"))
+	elif(genre is not None and language is None and movie_name is None):
+		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where GENRE = '{genre}'"))
+	elif(genre is None and language is not None and movie_name is None):
+		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}'"))
+	elif(movie_name is not None):
+		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where MOVIE_NAME = '{movie_name}'"))
+	else:
+		cursor = g.conn.execute(text("SELECT * FROM MOVIE"))
+
+	movies = []
+	for movie_name in cursor:
+		movies.append(movie_name)
+	print(movies)
+	context = dict(data = movies)
+	return render_template("movies.html", **context)
+
+
+@app.route('/songs', methods=['GET'])
+def get_trending_movies():
+	song_name = request.args.get("songname")
+	language = request.args.get("language")
+	singer = request.args.get("singer")
+
+	if(song_name is not None):
+		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
+	elif (singer is not None):
+		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
+	elif (language is not None):
+		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where language = '{language}') as s on m.movie_id = s.movie_id"))
+
+	songs = []
+	for row in cursor:
+		songs.append(row)
+	print("Songs: ", songs)
+	context = dict(data = songs)
+	return render_template("songs_results.html", **context)		
+
+@app.route('/trending', methods=['GET'])
+def get_songs():
+	cursor = g.conn.execute(text("SELECT m.MOVIE_NAME, p.purchases FROM MOVIE as m JOIN (select movie_id, count(*) as purchases from RATES group by movie_id order by purchases desc) as p on p.movie_id = m.movie_id order by p.purchases desc"))
+
+	trending_movies = []
+	for row in cursor:
+		trending_movies.append(row)
+	print("Trending movies: ", trending_movies)
+	context = dict(data = trending_movies)
+	return render_template("trending.html", **context)	
+
+
+@app.route('/highlyrated', methods=['GET'])
+def get_songs():
+	cursor = g.conn.execute(text("select m.MOVIE_NAME, avg(r.RATINGS) as avg_rating from MOVIE as m join REVIEW_RATINGS as r on m.movie_id = r.movie_id group by m.movie_id order by avg_rating desc"))
+
+	highlyrated_movies = []
+	for row in cursor:
+		highlyrated_movies.append(row)
+	print("High rated movies: ", highlyrated_movies)
+	context = dict(data = highlyrated_movies)
+	return render_template("highlyrated.html", **context) 
+
+
+
 if __name__ == "__main__":
 	import click
 

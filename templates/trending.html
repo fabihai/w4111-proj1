@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+
+<h2>Movies table</h2>
+
+<table style="width:100%">
+  <tr>
+    <th>Movie Name</th>
+    <th>Number of purchases</th>
+  </tr>
+  
+  {% for n in data %}
+    <tr> 
+    <td>{{n[0]}}</td>
+    <td>{{n[1]}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
+
