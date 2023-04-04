@@ -227,7 +227,7 @@ def get_songs():
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where language = '{language}') as s on m.movie_id = s.movie_id"))
 	else:
 		cursor = None 
-		
+
 	songs = []
 	for row in cursor:
 		songs.append(row)
@@ -262,17 +262,18 @@ def get_highlyrated():
 def get_movieinfo(moviename):
 	cursor = g.conn.execute(text(f"select ACTOR_NAME from ACTOR where ACTOR_ID in (select r.ACTOR_ID from (select * from MOVIE where MOVIE_NAME = '{moviename}') as m JOIN ROLE_PLAYED as r on m.movie_id = r.movie_id)"))
 	actors = [i for i in cursor]
+	print("Actors: ", actors)
 
 	cursor = g.conn.execute(text(f"select mm.avg_rating from (select m.MOVIE_NAME, avg(r.RATINGS) as avg_rating from MOVIE as m join REVIEW_RATINGS as r on m.movie_id = r.movie_id group by m.movie_id order by avg_rating desc) as mm where mm.MOVIE_NAME = '{moviename}' "))
 	rating = [i for i in cursor]
+	print("Rating: ", rating)
 
-	cursor = g.conn.execute(text(f"select movie_name, language from movie"))
-	highlyrated_movies = []
+	cursor = g.conn.execute(text(f"select movie_name, language, director, genre from MOVIE where MOVIE_NAME = '{moviename}'"))
+	movie_info = []
 	for row in cursor:
-		highlyrated_movies.append(row)
-	print("High rated movies: ", highlyrated_movies)
-	context = dict(data = highlyrated_movies, rate = rating)
-	# context = dict(data = )
+		movie_info.append(row)
+
+	context = dict(actors = actors, rate = rating, movie_info = movie_info)
 	print(context)
 	return render_template("movieinfo.html", **context) 
 
