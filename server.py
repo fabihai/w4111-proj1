@@ -265,12 +265,11 @@ def get_movieinfo(moviename):
 	rating = [i for i in cursor]
 
 	cursor = g.conn.execute(text(f"select movie_name, language from movie"))
-	# rating = [i for i in cursor]
 	highlyrated_movies = []
 	for row in cursor:
 		highlyrated_movies.append(row)
 	print("High rated movies: ", highlyrated_movies)
-	context = dict(data = highlyrated_movies)
+	context = dict(data = highlyrated_movies, rate = rating)
 	# context = dict(data = )
 	print(context)
 	return render_template("movieinfo.html", **context) 
