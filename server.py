@@ -116,7 +116,7 @@ def index():
 
 	# DEBUG: this is debugging code to see what request looks like
 	print(request.args)
-	return render_template("index.html", **context)
+	return render_template("index.html")
 
 
 #
