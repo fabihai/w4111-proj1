@@ -52,7 +52,7 @@ login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-	return g.conn.execute(text('SELECT * FROM users WHERE user_id={user_id}'))
+	return g.conn.execute(text(f'SELECT * FROM users WHERE user_id={user_id}'))
 
 #USER
 
