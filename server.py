@@ -234,7 +234,7 @@ def get_songs():
 		songs.append(row)
 	print("Songs: ", songs)
 	context = dict(data = songs)
-	return render_template("songs_results.html", **context)		
+	return render_template("songs.html", **context)		
 
 @app.route('/trending', methods=['GET'])
 def get_trending_movies():
