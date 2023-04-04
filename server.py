@@ -178,7 +178,7 @@ def login():
     return render_template("sign-up.html")
 
 
-@app.route('/movies', methods=['GET'])
+@app.route('/movie_results', methods=['GET'])
 def get_movies():
 	print("Arguments: ", request.args)
 	print("Genre args: ", request.args.get('genre'))
@@ -190,16 +190,22 @@ def get_movies():
 
 
 	if(genre is not None and language is not None and movie_name is not None):
+		print("genre: ", genre, "language: ", language, "movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}' AND MOVIE_NAME = '{movie_name}'"))
-	elif(genre is not None and language is not None and movie_name is None):
+	elif(genre is not None and language is not None):
+		print("genre: ", genre, "language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}'"))
-	elif(genre is not None and language is None and movie_name is None):
+	elif(genre is not None ):
+		print("genre: ", genre)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where GENRE = '{genre}'"))
-	elif(genre is None and language is not None and movie_name is None):
+	elif(language is not None):
+		print("language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}'"))
 	elif(movie_name is not None):
+		print("movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where MOVIE_NAME = '{movie_name}'"))
 	else:
+		print("all")
 		cursor = g.conn.execute(text("SELECT * FROM MOVIE"))
 
 	movies = []
@@ -207,8 +213,14 @@ def get_movies():
 		movies.append(movie_name)
 	print(movies)
 	context = dict(data = movies)
-	return render_template("movies.html", **context)
-	# return render_template("moviesearch_results.html", **context)
+	return render_template("moviesearch_results.html", **context)
+
+
+
+@app.route('/movies', methods=['GET'])
+def movies_homepage():
+	return render_template("movies.html")
+
 
 @app.route('/songs', methods=['GET'])
 def get_songs():
