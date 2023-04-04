@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+
+  <nav>
+    <div class = "navbar">
+      <h1> Movie DB </h1>
+      <a href="/index"> HOME </a>
+      <a class="active" href="/songs"> SONGS </a>
+      <a href="/movies"> MOVIES </a>
+      <a href="/profile"> PROFILE </a>
+      <a href="/sign-up"> SIGN UP/LOG IN </a>
+    </div>
+  </nav>
+
+
+<h2>Movie information</h2>
+
+
+
+<table style="width:100%">
+
+  <p>Movie name:  {{movie_info[0][0]}}</p>
+  <p>Language:  {{movie_info[0][1]}}</p>
+  <p>Director:  {{movie_info[0][2]}}</p>
+  <p>Genre:  {{movie_info[0][3]}}</p>
+  <p>Avg Rating:  {{rate[0][0]}}</p>
+
+
+
+    <!-- {% for i in movie_info %}
+    <p>{{i}}</p>
+    {% endfor %}
+
+    {% for i in rate %}
+    <p>Rating: {{i[0]}}</p>
+    {% endfor %} -->
+
+    <p>Actors: </p>
+    {% for i in actors %}
+    <p>{{i[0]}}</p>
+    {% endfor %}
+
+
+</body>
+</html>
+

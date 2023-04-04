@@ -231,7 +231,7 @@ def logout():
 	return redirect(url_for('login'))
 
 
-@app.route('/movies', methods=['GET'])
+@app.route('/movie_results', methods=['GET'])
 def get_movies():
 	print("Arguments: ", request.args)
 	print("Genre args: ", request.args.get('genre'))
@@ -242,17 +242,23 @@ def get_movies():
 	movie_name = request.args.get("movie_name")
 
 
-	if(genre is not None and language is not None and movie_name is not None):
+	if(genre != "" and language != ""  and movie_name != "" ):
+		print("genre: ", genre, "language: ", language, "movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}' AND MOVIE_NAME = '{movie_name}'"))
-	elif(genre is not None and language is not None and movie_name is None):
+	elif(genre != "" and language != ""):
+		print("genre: ", genre, "language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}' AND GENRE = '{genre}'"))
-	elif(genre is not None and language is None and movie_name is None):
+	elif(genre != ""):
+		print("genre: ", genre)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where GENRE = '{genre}'"))
-	elif(genre is None and language is not None and movie_name is None):
+	elif(language != ""):
+		print("language: ", language)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where LANGUAGE = '{language}'"))
-	elif(movie_name is not None):
+	elif(movie_name != ""):
+		print("movie_name: ", movie_name)
 		cursor = g.conn.execute(text(f"SELECT * FROM MOVIE where MOVIE_NAME = '{movie_name}'"))
 	else:
+		print("all")
 		cursor = g.conn.execute(text("SELECT * FROM MOVIE"))
 
 	movies = []
@@ -260,21 +266,30 @@ def get_movies():
 		movies.append(movie_name)
 	print(movies)
 	context = dict(data = movies)
-	#return render_template("movies.html", **context)
 	return render_template("moviesearch_results.html", **context)
 
-@app.route('/songs', methods=['GET'])
-def get_songs():
-	song_name = request.args.get("songname")
-	language = request.args.get("language")
-	# singer = request.args.get("singer")
 
-	if(song_name is not None):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
-	# elif (singer is not None):
-	# 	cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
-	elif (language is not None):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
+
+@app.route('/movies', methods=['GET'])
+def movies_homepage():
+	return render_template("movies.html")
+
+@app.route('/songs', methods=['GET'])
+def songs_homepage():
+	return render_template("songs.html")
+
+@app.route('/song_results', methods=['GET'])
+def get_songs():
+	song_name = request.args.get("song_name")
+	language = request.args.get("language")
+	singer = request.args.get("singer")
+
+	if(song_name != ""):
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
+	elif (singer != ""):
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
+	elif (language != ""):
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
 	else:
 		cursor = g.conn.execute(text("SELECT * FROM SONGS"))
 
@@ -283,7 +298,7 @@ def get_songs():
 		songs.append(row)
 	print("Songs: ", songs)
 	context = dict(data = songs)
-	return render_template("songs.html", **context)		
+	return render_template("songsearch_results.html", **context)		
 
 @app.route('/trending', methods=['GET'])
 def get_trending_movies():
@@ -308,8 +323,10 @@ def get_highlyrated():
 	context = dict(data = highlyrated_movies)
 	return render_template("highlyrated.html", **context) 
 
-@app.route('/movie/<moviename>', methods=['GET'])
-def get_movieinfo(moviename):
+@app.route('/movieinfo_results', methods=['GET'])
+def get_movieinfo():
+	moviename = request.args.get("movie_name")
+
 	cursor = g.conn.execute(text(f"select ACTOR_NAME from ACTOR where ACTOR_ID in (select r.ACTOR_ID from (select * from MOVIE where MOVIE_NAME = '{moviename}') as m JOIN ROLE_PLAYED as r on m.movie_id = r.movie_id)"))
 	actors = [i for i in cursor]
 	print("Actors: ", actors)
@@ -325,7 +342,7 @@ def get_movieinfo(moviename):
 
 	context = dict(actors = actors, rate = rating, movie_info = movie_info)
 	print(context)
-	return render_template("movieinfo.html", **context) 
+	return render_template("movieinfo_results.html", **context) 
 
 
 if __name__ == "__main__":

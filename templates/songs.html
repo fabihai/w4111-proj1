@@ -23,33 +23,23 @@
         <a href="/login"> LOG IN </a>
       </div>
     </nav>
+
     <div>
-      <h2> Search by Song </h2>
+      <h2> Search Songs </h2>
     </div>
-
-    <form method="GET">
-    <p> <input type="text" name="search"> <input type="submit" value="Search"></p>
-    </form>
     
-    <h2>Songs table</h2>
 
-    <table style="width:100%">
-      <thead>
-        <tr>
-          <th>Song Name</th>
-          <th>Language</th>
-        </tr>
-      </thead>
-      
-      <tbody>
-        {% for n in data %}
-        <tr> 
-        <td>{{n[2]}}</td>
-        <td>{{n[3]}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <form action="/song_results" method="GET">
+      <label for="song_name">Song:</label>
+      <input type="text" id="song_name" name="song_name"><br><br>
+      <label for="language">Language:</label>
+      <input type="text" id="language" name="language"><br><br>
+      <label for="singer">Singer:</label>
+      <input type="text" id="singer" name="singer"><br><br>
+      <input type="submit" value="Search">
+    </form>
+
+    
   </body>
 
 
