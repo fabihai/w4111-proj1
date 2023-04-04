@@ -232,11 +232,11 @@ def get_songs():
 	singer = request.args.get("singer")
 
 	if(song_name != ""):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_name = '{song_name}') as s on m.movie_id = s.movie_id"))
 	elif (singer != ""):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
 	elif (language != ""):
-		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
+		cursor = g.conn.execute(text(f"select s.song_name, m.MOVIE_NAME, s.SONG_LANGUAGE  from movie as m join (select * from songs where song_language = '{language}') as s on m.movie_id = s.movie_id"))
 	else:
 		cursor = g.conn.execute(text("SELECT * FROM SONGS"))
 
@@ -270,8 +270,10 @@ def get_highlyrated():
 	context = dict(data = highlyrated_movies)
 	return render_template("highlyrated.html", **context) 
 
-@app.route('/movie/<moviename>', methods=['GET'])
-def get_movieinfo(moviename):
+@app.route('/movieinfo/', methods=['GET'])
+def get_movieinfo():
+	moviename = request.args.get("movie_name")
+
 	cursor = g.conn.execute(text(f"select ACTOR_NAME from ACTOR where ACTOR_ID in (select r.ACTOR_ID from (select * from MOVIE where MOVIE_NAME = '{moviename}') as m JOIN ROLE_PLAYED as r on m.movie_id = r.movie_id)"))
 	actors = [i for i in cursor]
 	print("Actors: ", actors)
@@ -287,7 +289,7 @@ def get_movieinfo(moviename):
 
 	context = dict(actors = actors, rate = rating, movie_info = movie_info)
 	print(context)
-	return render_template("movieinfo.html", **context) 
+	return render_template("movieinfo_results.html", **context) 
 
 
 if __name__ == "__main__":

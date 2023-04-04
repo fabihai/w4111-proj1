@@ -23,12 +23,14 @@
     </div>
   </nav>
   <div>
-    <h2>Search</h2>
+    <h2>Get Movie Info</h2>
   </div>
 
-  <form method="GET" action="/">
-  <p> <input type="text" name="name"> <input type="submit" value="Search"></p>
+  <form action="/movieinfo_results" method="GET">
+    <label for="movie_name">Movie name:</label>
+    <input type="text" id="movie_name" name="movie_name"><br><br>
   </form>
+
 
 </body>
 
