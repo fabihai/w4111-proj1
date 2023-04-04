@@ -14,7 +14,7 @@
   <body>
     <nav>
       <div class = "navbar">
-	      <h1> Movie DB </h1>
+	      <h1> IMDB</h1>
         <a href="/index"> HOME </a>
         <a href="/songs"> SONGS </a>
         <a class="active" href="/"> MOVIES </a>
@@ -22,13 +22,24 @@
         <a href="/sign-up"> SIGN UP/LOG IN </a>
       </div>
     </nav>
+
+    
+
     <div>
-      <h2> Search by Movie</h2>
+      <h2> Search Movies </h2>
     </div>
 
-    <form method="GET">
-	    <p> <input type="text" name="movie"> <input type="submit" value="Search"> </p>
+    <form action="/movies" method="GET">
+      <label for="movie_name">Movie name:</label>
+      <input type="text" id="movie_name" name="movie_name"><br><br>
+      <label for="language">Language:</label>
+      <input type="text" id="language" name="language"><br><br>
+      <label for="genre">Genre:</label>
+      <input type="text" id="genre" name="genre"><br><br>
+      <input type="submit" value="Search">
     </form>
+  
+    
   </body>
 
 
