@@ -7,6 +7,18 @@ table, th, td {
 </style>
 <body>
 
+  <nav>
+    <div class = "navbar">
+      <h1> Movie DB </h1>
+      <a href="/index"> HOME </a>
+      <a class="active" href="/songs"> SONGS </a>
+      <a href="/movies"> MOVIES </a>
+      <a href="/profile"> PROFILE </a>
+      <a href="/sign-up"> SIGN UP/LOG IN </a>
+    </div>
+  </nav>
+
+
 <h2>Movie information</h2>
 
 
@@ -17,7 +29,7 @@ table, th, td {
   <p>Language:  {{movie_info[0][1]}}</p>
   <p>Director:  {{movie_info[0][2]}}</p>
   <p>Genre:  {{movie_info[0][3]}}</p>
-  <p>Rating:  {{rate[0][0]}}</p>
+  <p>Avg Rating:  {{rate[0][0]}}</p>
 
 
 
@@ -29,7 +41,7 @@ table, th, td {
     <p>Rating: {{i[0]}}</p>
     {% endfor %} -->
 
-    <p>Actors</p>
+    <p>Actors: </p>
     {% for i in actors %}
     <p>{{i[0]}}</p>
     {% endfor %}
