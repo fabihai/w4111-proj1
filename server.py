@@ -158,7 +158,7 @@ def signup():
     cursor = g.conn.execute(text(select_query))
     if cursor.fetchone() is None:
         g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
-    g.conn.commit()
+    	g.conn.commit()
         flash('Account successfully created. Please log in.')
         cursor.close()
         return redirect('/login')
