@@ -210,8 +210,8 @@ def get_movies():
 		movies.append(movie_name)
 	print(movies)
 	context = dict(data = movies)
-	return render_template("movies.html", **context)
-
+	#return render_template("movies.html", **context)
+    return render_template("moviesearch_results.html", **context)
 
 @app.route('/songs', methods=['GET'])
 def get_songs():
