@@ -137,7 +137,7 @@ def profile():
 	return render_template("profile.html", **context)
 
 # Adds new user to the DB system
-@app.route('/sign-up', methods = ['POST'])
+@app.route('/sign-up', methods = ['GET', 'POST'])
 def signup():
 	if current_user.is_authenticated:
 		return redirect('/index')
