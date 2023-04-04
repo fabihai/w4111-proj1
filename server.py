@@ -214,7 +214,7 @@ def get_movies():
 
 
 @app.route('/songs', methods=['GET'])
-def get_trending_movies():
+def get_songs():
 	song_name = request.args.get("songname")
 	language = request.args.get("language")
 	singer = request.args.get("singer")
@@ -225,7 +225,9 @@ def get_trending_movies():
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from SONGS where SONG_ID in (select SONG_ID from SUNG_BY where singer_id in (select SINGER_ID from SINGER where singer_name = '{singer}'))) as s on s.movie_id = m.movie_id"))
 	elif (language is not None):
 		cursor = g.conn.execute(text(f"select m.MOVIE_NAME, s.song_name, s.SONG_LANGUAGE  from movie as m join (select * from songs where language = '{language}') as s on m.movie_id = s.movie_id"))
-
+	else:
+		cursor = None 
+		
 	songs = []
 	for row in cursor:
 		songs.append(row)
@@ -234,7 +236,7 @@ def get_trending_movies():
 	return render_template("songs_results.html", **context)		
 
 @app.route('/trending', methods=['GET'])
-def get_songs():
+def get_trending_movies():
 	cursor = g.conn.execute(text("SELECT m.MOVIE_NAME, p.purchases FROM MOVIE as m JOIN (select movie_id, count(*) as purchases from RATES group by movie_id order by purchases desc) as p on p.movie_id = m.movie_id order by p.purchases desc"))
 
 	trending_movies = []
