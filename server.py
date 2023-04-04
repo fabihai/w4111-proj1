@@ -139,35 +139,32 @@ def profile():
 
     return render_template("profile.html", **context)
 
-
 # Adds new user to the DB system
-@app.route('/sign-up', methods=['POST'])
+@app.route('/sign-up', methods = ['POST'])
 def signup():
-    # checks if user is logged in
-    if current_user.is_authenticated:
-        return redirect('/index')
-    else:
-    # accessing form inputs from user
-    	name, account_type = request.form['name', 'account_type']
-
-    # passing params in for each variable into query
-    params = {}
-    params["new_name", "account_type"] = name, account_type
-
-    select_query = "SELECT user_name FROM users WHERE name=user_name"
-    cursor = g.conn.execute(text(select_query))
-    if cursor.fetchone() is None:
-        g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
-        g.conn.commit()
-        flash('Account successfully created. Please log in.')
-        cursor.close()
-        return redirect('/login')
-    else:
-    	flash("Username is taken. Pick a new one.")
-    	return redirect('/sign-up')
+	if current_user.is_authenticated:
+		return redirect('/index')
+	else:
+		name, account_type = request.form['name', 'account_type']
+	params = {}
+	params["new_name", "account_type"] = name, account_type
+	select_query = "SELECT user_name FROM users WHERE name = user_name"
+	cursor = g.conn.execute(text(select_query))
+	if cursor.fetchone() is None:
+		g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
+		g.conn.commit()
+		flash('Account successfully created. Please log in.')
+		cursor.close()
+		return redirect('/login')
+	else:
+		flash("Username is taken. Pick a new one.")
+		return redirect("/sign-up")
 	return render_template("sign-up.html")
 
-	
+
+
+
+
 @app.route('/login', methods=['GET'])
 def login():
     
