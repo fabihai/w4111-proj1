@@ -256,6 +256,24 @@ def get_highlyrated():
 	context = dict(data = highlyrated_movies)
 	return render_template("highlyrated.html", **context) 
 
+@app.route('/movie/<moviename>', methods=['GET'])
+def get_songs(moviename):
+	cursor = g.conn.execute(text(f"select ACTOR_NAME from ACTOR where ACTOR_ID in (select r.ACTOR_ID from (select * from MOVIE where MOVIE_NAME = '{moviename}') as m JOIN ROLE_PLAYED as r on m.movie_id = r.movie_id)"))
+	actors = [i for i in cursor]
+
+	cursor = g.conn.execute(text(f"select mm.avg_rating from (select m.MOVIE_NAME, avg(r.RATINGS) as avg_rating from MOVIE as m join REVIEW_RATINGS as r on m.movie_id = r.movie_id group by m.movie_id order by avg_rating desc) as mm where mm.MOVIE_NAME = '{moviename}' "))
+	rating = [i for i in cursor]
+
+	cursor = g.conn.execute(text(f"select MOVIE_NAME, LANGUAGE from MOVIE"))
+	rating = [i for i in cursor]
+	highlyrated_movies = []
+	for row in cursor:
+		highlyrated_movies.append(row)
+	print("High rated movies: ", highlyrated_movies)
+	context = dict(data = highlyrated_movies)
+	# context = dict(data = )
+	print(context)
+	return render_template("movieinfo.html", **context) 
 
 
 if __name__ == "__main__":
