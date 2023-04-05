@@ -144,7 +144,7 @@ def index():
 	"""
 
 	# DEBUG: this is debugging code to see what request looks like
-	print(request.args)
+	#print(request.args)
 	return render_template("index.html")
 
 
@@ -205,10 +205,10 @@ def login():
 	form = LoginForm()
     
 	if form.validate_on_submit:
+		user = g.conn.execute(text(f"select user_id from users where user_name='{form.username.data}'"))
 		cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{form.username.data}'"))
 		if cursor.fetchone():
-			user = g.conn.execute(text(f"select user_id from users where user_name='{form.username.data}'"))
-			login_user(user)
+			login_user(cursor)
 			return redirect(url_for('index'))
 	else:
 		flash('Incorrect username. Try again.')
