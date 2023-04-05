@@ -18,7 +18,7 @@
       <a href="/songs"> SONGS </a>
       <a href="/movies"> MOVIES </a>
       <a href="/profile"> PROFILE </a>
-      <a href="/sign-up"> SIGN UP </a>
+      <a href="/signup"> SIGN UP </a>
       <a class="active" href="/"> LOG IN </a>
     </div>
     
@@ -26,11 +26,14 @@
       <h2> Log In </h2>
     </div>
 
-    <form method="GET" action="/log-in">
-      {{ form.hidden_tag() }}
-      {{ form.username }}
-      {{ form.submit }}
+    <form action="/login" method="POST">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username"><br><br>
+      <label for="account_type">Account type:</label>
+      <input type="text" id="account_type" name="account_type"><br><br>
+      <input type="submit" value="Login">
     </form>
+
   </body>
 
 

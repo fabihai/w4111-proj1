@@ -13,10 +13,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, flash, url_for, Response
-from flask_login import login_user, LoginManager, current_user, login_required, logout_user, UserMixin
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import InputRequired, ValidationError, AnyOf
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -46,31 +43,7 @@ app.config['SECRET_KEY'] = 'lookasecretkey'
 #
 engine = create_engine(DATABASEURI)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = "login"
 
-@login_manager.user_loader
-def load_user(user_id):
-	return g.conn.execute(text(f'SELECT * FROM users WHERE user_id={user_id}'))
-
-#USER
-
-# FORMS
-class RegisterForm(FlaskForm):
-	username = StringField('Username', validators=[InputRequired()])
-	account_type = StringField('Account Type', validators=[InputRequired(), AnyOf(values=['VIP', 'Prime', 'Non Prime'])])
-	submit = SubmitField('Sign Up')
-	def validate_username(self,username):
-		cursor = g.conn.execute(text(f'SELECT user_name FROM users WHERE user_name={username}'))
-		if cursor.fetchone():
-			raise ValidationError('The username is taken.')
-
-class LoginForm(FlaskForm):
-	username = StringField('Username', validators=[InputRequired()])
-	submit = SubmitField("Login")
-
-#
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
@@ -147,87 +120,45 @@ def index():
 	return render_template("index.html")
 
 
-#
-# This is the path to the User Profile
-#   
-#   localhost:8111/profile
-@app.route('/profile', methods=['GET', 'POST'])
-@login_required
-def profile():
-	cursor = g.conn.execute(text(f'SELECT * from users WHERE user_id={current_user.id}'))
-	info = []
-	for result in cursor:
-		info.append(result[0])
-	cursor.close()
-	context = dict(data = info)
-
-	return render_template("profile.html", **context)
 
 # Adds new user to the DB system
-@app.route('/sign-up', methods = ['GET', 'POST'])
+@app.route('/signup', methods = ['GET', 'POST'])
 def signup():
-	if current_user.is_authenticated:
-		return redirect(url_for('index'))
-	
-	form = RegisterForm()
-	if form.validate_on_submit():
-		g.conn.execute(text(f'INSERT INTO users({form.username.data}, {form.account_type.data}) VALUES (:new_name, :account_type)'))
-		g.conn.commit()
-		flash('Account successfully created. Please log in.')
-		return redirect(url_for('login'))
-		"""
-		name, account_type = request.form['name', 'account_type']
-		params = {}
-		params["new_name", "account_type"] = name, account_type
-		cursor = g.conn.execute(text("SELECT user_name FROM users WHERE user_name = '{name}'"))
-		if cursor.fetchone() is None:
-			g.conn.execute(text('INSERT INTO users(name, account_type) VALUES (:new_name, :account_type)'), params)
-			g.conn.commit()
-			flash('Account successfully created. Please log in.')
-			cursor.close()
-			return redirect(url_for('login'))
+	if request.method == 'GET':
+		return render_template("sign-up.html")
+	elif request.method == 'POST':
+		username = request.form.get('username')
+		account_type = request.form.get('account_type')
+		# a = g.conn.execute(text(f'SELECT * FROM MOVIE WHERE'))
+		cursor = g.conn.execute(text(f"SELECT * FROM USERS WHERE USER_NAME = '{username}'"))
+		print("cursor: ", cursor)
+		users = [i for i in cursor]
+		print("users: ", users)
+		if len(users) != 0:
+			print("username exits")
+			# flash("Username already exists.")
+			return render_template("signup_fail.html")
 		else:
-			flash("Username is taken. Pick a new one.")
-			return redirect(url_for('signup'))
-		"""
-	return render_template("sign-up.html", form=form)
-
-
-
+			g.conn.execute(text(f"INSERT INTO USERS(USER_NAME, ACCOUNT_TYPE) VALUES ('{username}', '{account_type}')"))
+			g.conn.commit()
+			flash("Account successfully created.")
+			return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
-	if current_user.is_authenticated:
-		return redirect('/')
-	form = LoginForm()
-    
-	if form.validate_on_submit:
-		user = g.conn.execute(text(f"select user_id from users where user_name='{form.username.data}'"))
-		cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{form.username.data}'"))
-		if cursor.fetchone():
-			login_user(user)
-			return redirect('/')
-	else:
-		flash('Incorrect username. Try again.')
-		"""
-			name = request.form['name']
-			cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{name}'"))
-			user = cursor.fetchone()
-			if user is None:
-				flash('Incorrect username. Try again.')
-				return redirect(url_for('login'))
-			login_user(user)
+	if request.method == 'GET':
+		return render_template("login.html")
+	elif request.method == 'POST':
+		username = request.form.get('username')
+		account_type = request.form.get('account_type')
+		cursor = g.conn.execute(text(f"SELECT * FROM USERS WHERE USER_NAME = '{username}' AND ACCOUNT_TYPE = '{account_type}'"))
+		users = [i for i in cursor]
+		print("users: ", users)
+		if len(users) != 0:
 			return redirect(url_for('index'))
-		"""
-	return render_template('login.html', form=form)
-
-@app.route('/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-	logout_user()
-	return redirect(url_for('login'))
+		else:
+			return render_template("login_fail.html")
 
 
 @app.route('/movie_results', methods=['GET'])
