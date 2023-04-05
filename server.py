@@ -13,7 +13,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, flash, url_for, Response
-from flask_login import login_user, LoginManager, current_user, login_required, logout_user
+from flask_login import login_user, LoginManager, current_user, login_required, logout_user, UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import InputRequired, ValidationError, AnyOf
@@ -200,7 +200,7 @@ def signup():
 def login():
 
 	if current_user.is_authenticated:
-		return redirect(url_for('index'))
+		return redirect('/index')
 	form = LoginForm()
     
 	if form.validate_on_submit:
@@ -208,7 +208,7 @@ def login():
 		cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{form.username.data}'"))
 		if cursor.fetchone():
 			login_user(user)
-			return redirect(url_for('index'))
+			return redirect('/index')
 	else:
 		flash('Incorrect username. Try again.')
 		"""
