@@ -208,7 +208,7 @@ def login():
 		user = g.conn.execute(text(f"select user_id from users where user_name='{form.username.data}'"))
 		cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{form.username.data}'"))
 		if cursor.fetchone():
-			login_user(cursor)
+			login_user(user)
 			return redirect(url_for('index'))
 	else:
 		flash('Incorrect username. Try again.')
