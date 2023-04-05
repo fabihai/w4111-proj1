@@ -200,7 +200,7 @@ def signup():
 def login():
 
 	if current_user.is_authenticated:
-		return redirect('/index')
+		return redirect('/')
 	form = LoginForm()
     
 	if form.validate_on_submit:
@@ -208,7 +208,7 @@ def login():
 		cursor = g.conn.execute(text(f"SELECT user_name FROM users WHERE user_name='{form.username.data}'"))
 		if cursor.fetchone():
 			login_user(user)
-			return redirect('/index')
+			return redirect('/')
 	else:
 		flash('Incorrect username. Try again.')
 		"""
