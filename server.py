@@ -151,7 +151,7 @@ def index():
 # This is the path to the User Profile
 #   
 #   localhost:8111/profile
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
 	cursor = g.conn.execute(text(f'SELECT * from users WHERE user_id={current_user.id}'))
@@ -196,7 +196,7 @@ def signup():
 
 
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 
 	if current_user.is_authenticated:
