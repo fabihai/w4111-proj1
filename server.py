@@ -68,7 +68,6 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[InputRequired()])
-	account_type = StringField('Account Type', validators=[InputRequired(), AnyOf(values=['VIP', 'Prime', 'Non Prime'])])
 	submit = SubmitField("Login")
 
 #
